@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Hanyang LMS Whisper</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <style>
+    :root {
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif;
+      color:#172033;background:#f4f6fa;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;padding:24px 14px 48px}
+    .wrap{max-width:900px;margin:0 auto}
+    .card{
+      background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:24px;
+      box-shadow:0 8px 28px rgba(15,23,42,.06)
+    }
+    h1{font-size:25px;margin:0 0 6px}
+    .sub{color:#667085;line-height:1.6;margin-bottom:18px}
+    .guide{
+      background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;
+      padding:14px 16px;line-height:1.7;font-size:14px;margin-bottom:16px
+    }
+    .status{
+      display:flex;align-items:flex-start;gap:10px;background:#f2f4f7;
+      padding:12px 14px;border-radius:12px;margin-bottom:14px
+    }
+    .dot{width:10px;height:10px;border-radius:99px;background:#98a2b3;margin-top:5px;flex:none}
+    .dot.ready{background:#12b76a}.dot.busy{background:#f79009}.dot.error{background:#f04438}
+    .controls{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+    button{
+      border:0;border-radius:11px;padding:11px 17px;font-size:15px;font-weight:650;
+      cursor:pointer
+    }
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .primary{background:#155eef;color:white}.stop{background:#d92d20;color:white}
+    .secondary{background:#e8eef8;color:#24324b}
+    textarea{
+      width:100%;min-height:380px;resize:vertical;padding:16px;border-radius:12px;
+      border:1px solid #d0d5dd;background:#fcfcfd;font-size:15px;line-height:1.65
+    }
+    .meta{margin-top:10px;color:#667085;font-size:13px;line-height:1.6}
+    .error{
+      display:none;margin-top:12px;background:#fff1f0;border:1px solid #fecdca;
+      color:#b42318;border-radius:10px;padding:12px 14px;white-space:pre-wrap;line-height:1.55
+    }
+    .privacy{
+      margin-top:14px;padding-top:14px;border-top:1px solid #eaecf0;
+      color:#667085;font-size:13px;line-height:1.65
+    }
+    .pill{
+      display:inline-block;padding:2px 8px;border-radius:99px;background:#ecfdf3;
+      color:#027a48;font-size:12px;font-weight:700;margin-right:6px
+    }
+    .progress{margin-top:8px;height:8px;background:#eaecf0;border-radius:99px;overflow:hidden}
+    .progress>div{height:100%;width:0%;background:#155eef;transition:width .2s}
+    code{background:#eef2f6;padding:2px 5px;border-radius:5px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Hanyang LMS Whisper</h1>
+    <div class="sub">한양대 LMS 강의 탭의 오디오를 브라우저 안에서 Whisper로 전사합니다.</div>
+
+    <div class="guide">
+      <b>사용 순서</b><br>
+      ① Chrome/Whale에서 LMS 강의를 열어 둡니다.<br>
+      ② 이 페이지에서 <b>Start</b>를 누릅니다.<br>
+      ③ 공유 창에서 <b>Chrome 탭 / Whale 탭</b> → LMS 강의 탭을 선택합니다.<br>
+      ④ ‘탭 오디오 공유’가 보이면 켭니다. 최신 Chromium에서는 별도 체크 없이 자동 포함될 수도 있습니다.<br>
+      ⑤ 강의가 끝나면 <b>Stop</b> → <b>Download TXT</b>.
+    </div>
+
+    <div class="status">
+      <span id="dot" class="dot busy"></span>
+      <div style="width:100%">
+        <div id="status">Whisper 엔진 준비 전</div>
+        <div id="detail" class="meta">Start를 누르면 모델을 준비합니다.</div>
+        <div class="progress"><div id="bar"></div></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="start" class="primary">Start</button>
+      <button id="stop" class="stop" disabled>Stop</button>
+      <button id="download" class="secondary" disabled>Download TXT</button>
+      <button id="clear" class="secondary">Clear</button>
+      <button id="diag" class="secondary">진단</button>
+    </div>
+
+    <textarea id="text" readonly placeholder="전사된 전체 텍스트가 여기에 누적됩니다."></textarea>
+    <div id="meta" class="meta">약 35초 단위로 오디오를 처리합니다. 첫 전사는 모델 준비 후 약 35초 뒤 나타납니다.</div>
+    <div id="error" class="error"></div>
+
+    <div class="privacy">
+      <span class="pill">No STT API</span>
+      <span class="pill">Browser-side Whisper</span><br>
+      음성 데이터는 별도의 음성인식 서버로 업로드하지 않습니다.
+      최초 사용 시 Whisper 모델과 실행 라이브러리를 인터넷에서 내려받으며, 이후에는 브라우저 캐시가 재사용될 수 있습니다.
+    </div>
+  </div>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
