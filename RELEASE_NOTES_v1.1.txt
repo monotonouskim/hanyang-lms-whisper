@@ -1,0 +1,29 @@
+﻿Hanyang LMS Whisper Web v1.1 — Release Notes
+=================================================
+
+NEW
+- User-provided Hanyang University logo added to header/favicon.
+- Lecture title and optional week input.
+- Lecture title/week/date automatically included in download filenames.
+- Pause / Resume.
+- Live audio level meter.
+- Timestamped transcript segments.
+- RAW / CLEAN views.
+- Bookmark, Unclear, Memo markers.
+- Last-segment manual re-transcription.
+- Automatic repetition-hallucination detection and one retry.
+- Safe repetition cleanup without semantic rewriting.
+- Automatic text recovery with localStorage.
+- CLEAN TXT, RAW TXT, SRT, AI-correction Markdown, Copy CLEAN.
+
+TRANSCRIPTION TUNING
+- 28-second capture windows.
+- 3-second overlap.
+- Whisper small.
+- Generation repetition controls enabled.
+- Stronger repetition suppression on retry.
+
+NOTES
+- Browser-side inference remains the default.
+- No external STT API is used.
+- First model load still requires internet access.

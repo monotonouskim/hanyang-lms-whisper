@@ -4,6 +4,14 @@
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f4f6fa",
-  "theme_color": "#111827",
-  "description": "Browser-side Whisper transcription for Hanyang LMS tab audio"
+  "theme_color": "#0f4c81",
+  "description": "Browser-side Whisper transcription for personal study",
+  "icons": [
+    {
+      "src": "./assets/hanyang-logo.png",
+      "sizes": "768x768",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
