@@ -1,17 +1,13 @@
 {
-  "name": "Hanyang LMS Whisper",
-  "short_name": "LMS Whisper",
+  "name": "Lecture Transcriber",
+  "short_name": "Lecture STT",
+  "description": "강의 오디오를 브라우저에서 전사해 CLEAN·RAW·AI용 스크립트로 정리하는 개인 학습 도구",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f4f6fa",
-  "theme_color": "#0f4c81",
-  "description": "Browser-side Whisper transcription for personal study",
+  "background_color": "#f4f7fb",
+  "theme_color": "#0b4f8a",
+  "lang": "ko",
   "icons": [
-    {
-      "src": "./assets/hanyang-logo.png",
-      "sizes": "768x768",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    {"src": "./hanyang-logo.png", "sizes": "554x554", "type": "image/png", "purpose": "any"}
   ]
 }

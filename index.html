@@ -3,124 +3,132 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0f4c81">
-  <title>Hanyang LMS Whisper</title>
-  <link rel="icon" type="image/png" href="./assets/hanyang-logo.png">
+  <meta name="theme-color" content="#0b4f8a">
+  <meta name="description" content="강의 오디오를 브라우저에서 전사해 CLEAN·RAW·AI용 스크립트로 정리하는 개인 학습 도구">
+  <title>Lecture Transcriber</title>
+  <link rel="icon" type="image/png" href="./hanyang-logo.png">
   <link rel="manifest" href="./manifest.webmanifest">
   <style>
-    :root {
-      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif;
-      color:#172033;background:#f4f6fa;
-      --blue:#0f4c81;--blue2:#155eef;--line:#e5e7eb;--muted:#667085;
-      --green:#12b76a;--orange:#f79009;--red:#f04438;
+    :root{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif;
+      color:#182230;background:#f4f7fb;
+      --blue:#0b4f8a;--blue2:#155eef;--blue-soft:#eef4ff;--line:#e4e7ec;
+      --muted:#667085;--green:#039855;--orange:#dc6803;--red:#d92d20;--purple:#6938ef;
     }
     *{box-sizing:border-box}
-    body{margin:0;padding:22px 14px 50px;background:#f4f6fa}
-    .wrap{max-width:980px;margin:0 auto}
-    .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
-    .header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-    .logo{width:58px;height:58px;object-fit:contain;flex:none}
-    h1{font-size:24px;margin:0 0 3px}
-    .sub{font-size:13px;color:var(--muted);line-height:1.45}
-    .unofficial{font-size:11px;color:#98a2b3;margin-top:2px}
-    .meta-grid{display:grid;grid-template-columns:1fr 130px;gap:10px;margin-bottom:14px}
-    label{font-size:12px;color:#475467;font-weight:700;display:block;margin-bottom:5px}
-    input{
-      width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:10px 12px;font-size:14px;background:white
-    }
-    .statusbox{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:13px}
-    .statusline{display:flex;align-items:center;gap:9px}
+    body{margin:0;padding:24px 14px 56px;background:linear-gradient(180deg,#f3f7fc 0,#f7f8fa 320px,#f7f8fa 100%)}
+    .wrap{max-width:1040px;margin:0 auto}
+    .card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 14px 40px rgba(16,24,40,.07)}
+    .header{display:flex;gap:16px;align-items:flex-start;margin-bottom:22px}
+    .logo{width:66px;height:66px;object-fit:contain;flex:none;border-radius:50%;background:#fff}
+    .product{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:2px 0 5px}
+    h1{font-size:27px;line-height:1.25;margin:0 0 7px;letter-spacing:-.02em}
+    .hero{font-size:15px;line-height:1.55;color:#344054;font-weight:650;margin-bottom:4px}
+    .sub{font-size:13px;line-height:1.55;color:var(--muted)}
+    .unofficial{font-size:11px;line-height:1.5;color:#98a2b3;margin-top:4px}
+    .meta-grid{display:grid;grid-template-columns:minmax(0,1fr) 145px 145px;gap:10px;margin-bottom:14px}
+    label{display:block;font-size:12px;color:#475467;font-weight:750;margin-bottom:5px}
+    input,select{width:100%;height:42px;border:1px solid #d0d5dd;border-radius:10px;padding:0 11px;font:inherit;font-size:14px;background:#fff;color:#182230;outline:none}
+    input:focus,select:focus{border-color:#84adff;box-shadow:0 0 0 3px rgba(21,94,239,.09)}
+    input:disabled,select:disabled{background:#f2f4f7;color:#98a2b3}
+    .statusbox{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+    .statusline{display:flex;align-items:center;gap:9px;min-width:0}
     .dot{width:10px;height:10px;border-radius:50%;background:#98a2b3;flex:none}
-    .dot.ready{background:var(--green)} .dot.busy{background:var(--orange)} .dot.error{background:var(--red)}
-    .detail{font-size:12px;color:var(--muted);margin:5px 0 0 19px}
-    .progress{height:7px;background:#eaecf0;border-radius:99px;overflow:hidden;margin-top:9px}
+    .dot.ready{background:var(--green)}.dot.busy{background:#f79009}.dot.error{background:var(--red)}
+    .statusline b{font-size:14px}.statusline .model-pill{margin-left:auto;font-size:11px;color:#475467;background:#fff;border:1px solid var(--line);padding:4px 8px;border-radius:999px}
+    .detail{font-size:12px;color:var(--muted);margin:5px 0 0 19px;line-height:1.5}
+    .progress{height:7px;background:#eaecf0;border-radius:99px;overflow:hidden;margin-top:10px}
     .progress>div{height:100%;width:0;background:var(--blue2);transition:width .2s}
     .audio-row{display:flex;align-items:center;gap:10px;margin-top:10px}
-    .audio-label{font-size:12px;color:#475467;width:74px}
+    .audio-label{font-size:12px;color:#475467;width:76px;flex:none}
     .meter{height:9px;background:#eaecf0;border-radius:99px;overflow:hidden;flex:1}
     .meter>div{height:100%;width:0;background:#12b76a;transition:width .08s linear}
-    .audio-text{font-size:12px;color:var(--muted);width:90px;text-align:right}
-    .controls,.marker-controls,.export-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px}
-    button{border:0;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer}
-    button:disabled{opacity:.42;cursor:not-allowed}
-    .primary{background:var(--blue2);color:#fff}.danger{background:#d92d20;color:#fff}
-    .secondary{background:#e9eef8;color:#24324b}.ghost{background:#f2f4f7;color:#344054}
-    .marker{background:#fff6ed;color:#b54708}.question{background:#fff1f0;color:#b42318}.memo{background:#f4f3ff;color:#5925dc}
-    .timer{font-variant-numeric:tabular-nums;font-weight:800;color:#344054;margin-left:auto;padding:8px 2px}
-    .barrow{display:flex;align-items:center;gap:8px}
-    .tabs{display:flex;border-bottom:1px solid var(--line);margin-top:4px}
-    .tab{
-      background:transparent;color:#667085;border-radius:0;padding:10px 14px;border-bottom:2px solid transparent
-    }
+    .audio-text{font-size:12px;color:var(--muted);width:90px;text-align:right;flex:none}
+    .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    button{border:0;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:750;cursor:pointer;transition:transform .04s ease,opacity .15s ease}
+    button:active:not(:disabled){transform:translateY(1px)}button:disabled{opacity:.4;cursor:not-allowed}
+    .primary{background:var(--blue2);color:#fff}.danger{background:#d92d20;color:#fff}.secondary{background:#eaf0fb;color:#243b64}.ghost{background:#f2f4f7;color:#344054}
+    .question{background:#fff1f0;color:#b42318}.memo{background:#f4f3ff;color:#5925dc}.ai{background:#155eef;color:#fff}
+    .timer{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:850;color:#344054;font-size:15px;padding:8px 2px}
+    .hint{font-size:11px;color:#98a2b3;margin:-2px 0 12px;line-height:1.45}
+    .tabs{display:flex;border-bottom:1px solid var(--line);margin-top:3px}
+    .tab{background:transparent;color:#667085;border-radius:0;padding:10px 14px;border-bottom:2px solid transparent}
     .tab.active{color:var(--blue2);border-bottom-color:var(--blue2)}
     .badge{font-size:11px;background:#f2f4f7;color:#475467;border-radius:99px;padding:2px 7px;margin-left:5px}
-    .transcript{
-      width:100%;min-height:390px;max-height:620px;overflow:auto;border:1px solid #d0d5dd;border-radius:0 0 12px 12px;
-      padding:15px;background:#fcfcfd;white-space:pre-wrap;font-size:14px;line-height:1.7
-    }
-    .meta{font-size:12px;color:var(--muted);line-height:1.55;margin:9px 0 12px}
-    .error{display:none;margin:10px 0;background:#fff1f0;border:1px solid #fecdca;color:#b42318;border-radius:10px;padding:12px;white-space:pre-wrap;line-height:1.5}
-    .restore{display:none;margin-bottom:12px;background:#fffaeb;border:1px solid #fedf89;color:#93370d;border-radius:10px;padding:11px 12px;font-size:13px}
-    .footer{font-size:11px;color:#98a2b3;border-top:1px solid var(--line);padding-top:12px;margin-top:10px;line-height:1.5}
-    .tiny{font-size:11px;color:#98a2b3}
-    @media(max-width:650px){.meta-grid{grid-template-columns:1fr}.timer{margin-left:0}.header{align-items:flex-start}.logo{width:50px;height:50px}}
+    .transcript{width:100%;min-height:390px;max-height:620px;overflow:auto;border:1px solid #d0d5dd;border-top:0;border-radius:0 0 12px 12px;padding:16px;background:#fcfcfd;white-space:pre-wrap;font-size:14px;line-height:1.72}
+    .summaryline{font-size:12px;color:var(--muted);line-height:1.55;margin:10px 0 12px}
+    .error{display:none;margin:10px 0;background:#fff1f0;border:1px solid #fecdca;color:#b42318;border-radius:10px;padding:12px;white-space:pre-wrap;line-height:1.5;font-size:12px}
+    .export-title{display:flex;align-items:center;gap:8px;margin:17px 0 8px;font-size:13px;font-weight:800;color:#344054}
+    .ready-chip{display:none;font-size:11px;color:#027a48;background:#ecfdf3;border:1px solid #abefc6;border-radius:999px;padding:3px 8px}
+    .exports{display:flex;gap:8px;flex-wrap:wrap}
+    details{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:#fafbfc}
+    summary{cursor:pointer;padding:11px 13px;font-size:12px;font-weight:750;color:#475467;user-select:none}
+    .advanced{padding:0 13px 13px;display:grid;grid-template-columns:180px 1fr;gap:12px}
+    .diagnostics{background:#101828;color:#d0d5dd;border-radius:10px;padding:12px;white-space:pre-wrap;font:11px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:116px;overflow:auto}
+    .footer{font-size:11px;color:#98a2b3;border-top:1px solid var(--line);padding-top:13px;margin-top:14px;line-height:1.6}
+    dialog{border:0;border-radius:14px;padding:0;box-shadow:0 24px 60px rgba(16,24,40,.22);width:min(92vw,480px)}
+    dialog::backdrop{background:rgba(16,24,40,.35)}
+    .dialog-body{padding:20px}.dialog-title{font-weight:800;font-size:16px;margin-bottom:5px}.dialog-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+    @media(max-width:760px){.meta-grid{grid-template-columns:1fr 1fr}.meta-grid>div:first-child{grid-column:1/-1}.advanced{grid-template-columns:1fr}.timer{width:100%;margin-left:0}.header{align-items:flex-start}.logo{width:56px;height:56px}.card{padding:18px}}
   </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card">
-    <div class="header">
-      <img class="logo" src="./assets/hanyang-logo.png" alt="Hanyang University logo">
+  <main class="card">
+    <header class="header">
+      <img class="logo" src="./hanyang-logo.png" alt="Hanyang University logo">
       <div>
-        <h1>Hanyang LMS Whisper</h1>
-        <div class="sub">강의 탭 오디오를 브라우저 안에서 Whisper로 전사하는 개인 학습 도구</div>
-        <div class="unofficial">비공식 개인 학습용 도구 · Hanyang University의 공식 서비스가 아닙니다.</div>
+        <div class="product">Lecture Transcriber · v1.2</div>
+        <h1>강의를 정확하게 기록하고, AI 학습 자료로 활용하세요.</h1>
+        <div class="hero">브라우저의 강의 오디오를 실시간으로 전사하여 CLEAN · RAW · AI용 스크립트로 정리합니다.</div>
+        <div class="unofficial">개인 학습을 위한 비공식 도구이며, 한양대학교 공식 서비스와는 무관합니다.</div>
       </div>
-    </div>
+    </header>
 
-    <div id="restoreBanner" class="restore">
-      이전 세션의 전사 기록을 복구했습니다. 필요 없으면 Clear를 누르세요.
-    </div>
-
-    <div class="meta-grid">
+    <section class="meta-grid" aria-label="강의 정보">
       <div>
         <label for="lectureTitle">강의 제목</label>
-        <input id="lectureTitle" placeholder="예: SF 영화와 철학적 사고 실험">
+        <input id="lectureTitle" placeholder="예: SF 영화와 철학적 사고 실험" autocomplete="off">
       </div>
       <div>
-        <label for="lectureWeek">주차 (선택)</label>
-        <input id="lectureWeek" placeholder="예: 3">
+        <label for="lectureWeek">주차</label>
+        <input id="lectureWeek" placeholder="예: 3" autocomplete="off">
       </div>
-    </div>
+      <div>
+        <label for="playbackSpeed">재생 배속</label>
+        <select id="playbackSpeed">
+          <option value="1">1.0×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5" selected>1.5×</option>
+          <option value="1.75">1.75×</option>
+          <option value="2">2.0×</option>
+        </select>
+      </div>
+    </section>
 
-    <div class="statusbox">
-      <div class="statusline"><span id="dot" class="dot ready"></span><b id="status">준비됨</b></div>
-      <div id="detail" class="detail">Start를 누르면 Whisper 모델을 준비합니다.</div>
+    <section class="statusbox" aria-live="polite">
+      <div class="statusline">
+        <span id="dot" class="dot ready"></span><b id="status">준비됨</b>
+        <span id="modelPill" class="model-pill">small 대기 · medium 필요 시 로드</span>
+      </div>
+      <div id="detail" class="detail">Start를 누르면 Whisper small을 준비한 뒤 LMS 탭을 선택합니다.</div>
       <div class="progress"><div id="progressBar"></div></div>
       <div class="audio-row">
         <div class="audio-label">LMS Audio</div>
         <div class="meter"><div id="audioMeter"></div></div>
         <div id="audioText" class="audio-text">대기</div>
       </div>
-    </div>
+    </section>
 
-    <div class="barrow">
-      <div class="controls">
-        <button id="startBtn" class="primary">Start</button>
-        <button id="pauseBtn" class="secondary" disabled>Pause</button>
-        <button id="stopBtn" class="danger" disabled>Stop</button>
-        <button id="retryBtn" class="ghost" disabled>↻ 마지막 구간 재전사</button>
-      </div>
-      <div id="timer" class="timer">00:00:00</div>
-    </div>
-
-    <div class="marker-controls">
-      <button id="bookmarkBtn" class="marker" disabled>⭐ 중요</button>
+    <div class="toolbar">
+      <button id="startBtn" class="primary">Start</button>
+      <button id="stopBtn" class="danger" disabled>Stop</button>
       <button id="unclearBtn" class="question" disabled>❓ 확인 필요</button>
       <button id="memoBtn" class="memo" disabled>📝 메모</button>
-      <button id="clearBtn" class="ghost">Clear</button>
-      <button id="diagBtn" class="ghost">진단</button>
+      <button id="newBtn" class="ghost">새 강의</button>
+      <div id="timer" class="timer">00:00:00</div>
     </div>
+    <div class="hint">❓는 현재 22초 chunk 전체를 medium으로 재검증합니다. 📝 메모도 해당 chunk에 연결됩니다.</div>
 
     <div class="tabs">
       <button id="cleanTab" class="tab active">CLEAN <span id="cleanBadge" class="badge">0</span></button>
@@ -128,25 +136,50 @@
     </div>
     <div id="transcript" class="transcript">전사된 내용이 여기에 나타납니다.</div>
 
-    <div id="meta" class="meta">
-      28초 단위로 처리하고 3초를 겹칩니다. 반복 환각이 감지되면 해당 구간을 자동으로 한 번 재전사합니다.
-    </div>
+    <div id="summaryLine" class="summaryline">22초 chunk · 2초 overlap · VAD 무음 필터 · small 1차 전사 · 이상 구간만 medium 검증</div>
     <div id="errorBox" class="error"></div>
 
-    <div class="export-controls">
-      <button id="txtBtn" class="secondary" disabled>⬇ CLEAN TXT</button>
+    <div class="export-title">강의 종료 후 저장 <span id="readyChip" class="ready-chip">AI 패키지 준비 완료</span></div>
+    <div class="exports">
+      <button id="aiBtn" class="ai" disabled>✨ AI 교정용 패키지</button>
+      <button id="cleanTxtBtn" class="secondary" disabled>⬇ CLEAN TXT</button>
       <button id="rawTxtBtn" class="secondary" disabled>⬇ RAW TXT</button>
-      <button id="srtBtn" class="secondary" disabled>⬇ SRT</button>
-      <button id="aiBtn" class="secondary" disabled>✨ AI 교정용</button>
-      <button id="copyBtn" class="ghost" disabled>📋 Copy CLEAN</button>
     </div>
 
-    <div class="footer">
-      음성은 별도의 STT API로 전송하지 않고 브라우저에서 처리합니다. 최초 실행 시 Whisper 모델과 실행 라이브러리를 내려받습니다.
-      브라우저 보안 정책상 Start 후 사용자가 직접 LMS 탭을 선택해야 합니다.
-    </div>
-  </div>
+    <details id="advancedDetails">
+      <summary>고급 설정 · 진단</summary>
+      <div class="advanced">
+        <div>
+          <label for="languageSelect">강의 언어</label>
+          <select id="languageSelect">
+            <option value="ko" selected>한국어</option>
+            <option value="en">영어</option>
+            <option value="auto">자동 감지</option>
+          </select>
+          <div class="hint" style="margin-top:7px">기본은 한국어입니다. 강의 중에는 변경할 수 없습니다.</div>
+        </div>
+        <pre id="diagnostics" class="diagnostics">진단 정보 준비 중…</pre>
+      </div>
+    </details>
+
+    <footer class="footer">
+      오디오는 별도의 STT API로 보내지 않고 현재 브라우저에서 처리합니다. 최초 실행 시 실행 라이브러리와 Whisper 모델 파일을 인터넷에서 내려받습니다. 브라우저 보안 정책상 Start 후 사용자가 직접 LMS 탭과 오디오 공유를 선택해야 합니다. 강의 녹음·전사 허용 범위는 해당 수업의 안내와 이용 규정을 확인하세요.
+    </footer>
+  </main>
 </div>
-<script type="module" src="./app.js"></script>
+
+<dialog id="memoDialog">
+  <form method="dialog" class="dialog-body" id="memoForm">
+    <div class="dialog-title">현재 chunk에 메모 남기기</div>
+    <div id="memoTarget" class="dialog-sub">현재 구간에 연결됩니다.</div>
+    <input id="memoInput" maxlength="240" placeholder="예: 이 부분은 시험 범위인지 확인">
+    <div class="dialog-actions">
+      <button value="cancel" class="ghost">취소</button>
+      <button id="memoSaveBtn" value="default" class="primary">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="./app.js?v=1.2.0"></script>
 </body>
 </html>

@@ -1,0 +1,39 @@
+Lecture Transcriber v1.2.0
+=========================
+
+핵심 목표
+- 실시간 자막 앱이 아니라 'AI 후처리용 고품질 강의 전사 데이터 생성기'로 재설계
+- 1.25~1.5배속 사용을 기본 상황으로 고려
+- 의미 해석/요약은 앱에서 하지 않고 AI 후처리에 맡김
+
+주요 변경
+- 헤더 문구/제품명 전면 정리
+- Start / Stop만 유지, Pause/Resume 제거
+- ⭐ 중요 제거, ❓ 확인 필요 + 📝 메모만 유지
+- ❓/메모는 현재 22초 chunk 전체에 연결
+- 22초 chunk + 2초 overlap
+- VAD 무음 필터 추가
+- RAW = 최초 small 결과 불변 보존
+- CLEAN = 안전한 반복 제거 + overlap 경계 중복 제거
+- 반복 환각/과도한 출력/발화 대비 누락을 quality gate로 탐지
+- 자동 이상 감지 또는 ❓ 표시 chunk만 Whisper medium을 필요 시 로드하여 재검증
+- small/medium이 모두 불안정하거나 크게 충돌하면 CLEAN에 두 후보를 함께 보존
+- medium 모델 준비 실패 시 small 결과를 잃지 않고 경고와 함께 보존
+- 재생 배속 메타데이터 기록
+- 언어: 한국어 기본, 영어/자동 감지는 고급 설정에서 선택
+- 다운로드 3종으로 단순화: AI 교정용 Markdown / CLEAN TXT / RAW TXT
+- Stop 후 남은 전사·medium 검증까지 완료되면 AI 패키지 자동 준비
+- localStorage 세션 복구 기능 제거
+- SRT, Copy CLEAN, 수동 마지막 구간 재전사 제거
+- 진단 정보는 접힌 고급 영역으로 이동
+- v1.1 Service Worker 캐시 문제를 제거하기 위한 cache-cleanup shim 포함
+- app/worker 파일 URL 버전 고정(v1.2.0)으로 혼합 버전 위험 감소
+
+모델
+- Transformers.js 3.8.1 고정
+- 1차: onnx-community/whisper-small
+- 2차: onnx-community/whisper-medium-ONNX (필요 시에만 로드)
+
+주의
+- medium은 브라우저에서 매우 무거운 모델이므로 첫 사용 시 다운로드/메모리 부담이 큽니다.
+- 장치 사양이나 WebGPU 상태에 따라 medium이 실패할 수 있으며, 이 경우 RAW/small 결과는 그대로 보존됩니다.

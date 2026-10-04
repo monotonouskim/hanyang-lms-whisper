@@ -1,0 +1,2 @@
+Lecture Transcriber v1.2.0
+Build target: static GitHub Pages
